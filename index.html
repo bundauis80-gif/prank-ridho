@@ -1,18 +1,91 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>System Recovery</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:#020202;color:#fff;font-family:monospace;transition:.15s}
-#app{height:100%;display:grid;place-items:center;padding:18px}.card{width:min(760px,94vw);border:2px solid #f33;background:#080808;padding:28px;text-align:center;box-shadow:0 0 35px #f22}
-h1{font-size:clamp(28px,8vw,62px);color:#f33;margin:0 0 18px}p{font-size:18px}.bar{height:28px;border:2px solid #fff;margin:24px 0;overflow:hidden}.fill{height:100%;width:0;background:#f33;transition:width .08s}
-#pct{font-size:26px}#log{height:120px;text-align:left;overflow:hidden;color:#ff7777;font-size:13px}#warning{display:none;color:#f33;font-size:20px;font-weight:bold}#final{display:none;border-color:#00ff66;box-shadow:0 0 35px #00ff66}
-.big{font-size:clamp(34px,9vw,76px);color:#00ff66;font-weight:bold;line-height:1.05}button{border:0;padding:14px 25px;margin:10px;font:inherit;font-weight:bold;cursor:pointer;background:#00ff66;color:#000;border-radius:8px}button.alt{background:#fff}
-.glitch{animation:shake .07s infinite}.red{background:#300!important}.flash{animation:flash .12s infinite}
-@keyframes shake{0%{transform:translate(3px,0)}25%{transform:translate(-3px,1px)}50%{transform:translate(1px,-3px)}75%{transform:translate(-1px,3px)}100%{transform:translate(3px,-1px)}}@keyframes flash{50%{filter:invert(1)}}
-</style></head><body><div id="app">
-<section class="card" id="main"><h1>⚠ SYSTEM FAILURE ⚠</h1><p id="status">Memeriksa sistem...</p><div class="bar"><div class="fill" id="fill"></div></div><div id="pct">0%</div><div id="warning">⚠ CRITICAL ERROR — RECOVERY REQUIRED ⚠</div><div id="log"></div></section>
-<section class="card" id="final"><div class="big">😂 BOY AWAS ADA RIDHO</div><p>Tenang bro. HP kamu aman.</p><p>Ini cuma <b>EXTREME PRANK V2</b> 🤣</p><button id="soundBtn">🔊 PUTAR EFEK</button><button class="alt" onclick="location.reload()">🔄 RECOVER SYSTEM</button></section>
-</div><script>
-const fill=document.getElementById("fill"),pct=document.getElementById("pct"),status=document.getElementById("status"),log=document.getElementById("log"),warning=document.getElementById("warning"),main=document.getElementById("main"),final=document.getElementById("final"),soundBtn=document.getElementById("soundBtn");
-const msgs=["Scanning system files...","Checking applications...","Analyzing memory...","Checking suspicious activity...","Security process running...","Critical warning detected...","Attempting recovery...","Recovery stuck at 99%..."];let n=0,audioCtx=null;
-function beep(freq=440,duration=.12){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type="square";g.gain.value=.045;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.stop(audioCtx.currentTime+duration)}
-const timer=setInterval(()=>{n++;const p=Math.min(n,100);fill.style.width=p+"%";pct.textContent=p+"%";if(n%10===0){log.innerHTML+="> "+msgs[Math.min(n/10-1,msgs.length-1)]+"<br>";if(n>70)beep(180,.07)}if(n>72)main.classList.add("glitch");if(n>88){status.textContent="⚠ SYSTEM UNSTABLE — PLEASE WAIT...";warning.style.display="block"}if(n>=99){document.body.classList.add("red");status.textContent="ERROR 0xPRANK"}if(n>=100){clearInterval(timer);main.classList.add("flash");beep(90,.25);setTimeout(()=>{document.body.classList.remove("red");main.style.display="none";final.style.display="block"},1800)}},55);
-soundBtn.addEventListener("click",()=>{beep(660,.12);setTimeout(()=>beep(440,.12),140);setTimeout(()=>beep(880,.22),280);soundBtn.textContent="🔊 EFEK DIPUTAR"});
-</script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Camera Check</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}
+.card{width:min(700px,95vw);background:#101010;border:1px solid #444;border-radius:16px;padding:24px;text-align:center;box-shadow:0 0 30px #000}
+h1{font-size:clamp(28px,7vw,48px);margin:0 0 12px}
+p{color:#ccc}
+video{display:none;width:100%;max-height:55vh;background:#000;border-radius:12px;margin-top:18px}
+button{border:0;border-radius:10px;padding:14px 22px;font-size:17px;font-weight:bold;cursor:pointer;margin:8px}
+#start{background:#00e676;color:#001b0a}
+#stop{background:#fff;color:#111;display:none}
+#status{margin-top:14px;color:#8cffb0}
+#reveal{display:none}
+.big{font-size:clamp(34px,9vw,70px);font-weight:900;color:#00ff66;line-height:1.05}
+.small{font-size:14px;color:#aaa}
+</style>
+</head>
+<body>
+<div class="card">
+  <div id="setup">
+    <h1>📷 CAMERA CHECK</h1>
+    <p>Tekan tombol di bawah jika kamu setuju menampilkan kamera di halaman ini.</p>
+    <button id="start">AKTIFKAN KAMERA</button>
+    <div id="status"></div>
+    <p class="small">Kamera hanya ditampilkan di perangkat ini. Tidak ada foto/video yang diambil, dikirim, atau disimpan oleh halaman ini.</p>
+  </div>
+
+  <video id="video" autoplay playsinline muted></video>
+
+  <div id="reveal">
+    <div class="big">😂 BOY AWAS ADA RIDHO</div>
+    <p>PRANK! Kameramu aman 😎</p>
+    <button id="again">ULANGI</button>
+  </div>
+</div>
+
+<script>
+const start=document.getElementById("start");
+const stop=document.getElementById("stop");
+const video=document.getElementById("video");
+const status=document.getElementById("status");
+const setup=document.getElementById("setup");
+const reveal=document.getElementById("reveal");
+const again=document.getElementById("again");
+let stream=null;
+
+async function startCamera(){
+  status.textContent="Meminta izin kamera...";
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"user"},
+      audio:false
+    });
+    video.srcObject=stream;
+    video.style.display="block";
+    start.style.display="none";
+    status.textContent="Kamera aktif. Tunggu...";
+    setTimeout(()=>{
+      stopCamera();
+      setup.style.display="none";
+      video.style.display="none";
+      reveal.style.display="block";
+    },5000);
+  }catch(e){
+    status.textContent="Kamera tidak diaktifkan. Izin diperlukan untuk menjalankan prank.";
+  }
+}
+
+function stopCamera(){
+  if(stream){
+    stream.getTracks().forEach(track=>track.stop());
+    stream=null;
+  }
+}
+
+start.addEventListener("click",startCamera);
+again.addEventListener("click",()=>{
+  reveal.style.display="none";
+  setup.style.display="block";
+  start.style.display="inline-block";
+  status.textContent="";
+});
+window.addEventListener("beforeunload",stopCamera);
+</script>
+</body>
+</html>
