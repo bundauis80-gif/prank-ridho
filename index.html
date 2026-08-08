@@ -1,80 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>System Alert</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#050505;color:#00ff66;font-family:monospace;min-height:100vh;display:flex;justify-content:center;align-items:center;overflow:hidden}
-.screen{width:92%;max-width:600px;text-align:center}
-.warning{color:#ff3030;font-size:clamp(32px,8vw,60px);font-weight:bold;animation:blink .7s infinite}
-.alert{color:white;font-size:20px;margin:20px 0}
-.box{border:2px solid #00ff66;padding:25px;background:#081108;box-shadow:0 0 25px #00ff66}
-.progress{width:100%;height:25px;border:2px solid #00ff66;margin-top:25px}
-.bar{width:0%;height:100%;background:#00ff66;transition:width .2s}
-.percent{font-size:24px;margin-top:10px}
-.fake{margin-top:20px;color:#ff5555;font-size:14px}
-#prank{display:none}
-.prank-title{color:#00ff66;font-size:clamp(45px,12vw,90px);font-weight:bold}
-button{margin-top:25px;padding:14px 30px;border:none;border-radius:8px;background:#00ff66;color:#000;font-size:18px;font-weight:bold;cursor:pointer}
-@keyframes blink{50%{opacity:.3}}
-.shake{animation:shake .08s infinite}
-@keyframes shake{0%{transform:translate(2px,1px)}25%{transform:translate(-2px,-1px)}50%{transform:translate(1px,-2px)}75%{transform:translate(-1px,2px)}100%{transform:translate(2px,-1px)}}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:#030303;color:#fff;font-family:monospace}
+#app{height:100%;display:grid;place-items:center;padding:20px}
+.card{width:min(720px,94vw);border:2px solid #f33;background:#080808;padding:28px;text-align:center;box-shadow:0 0 35px #f22}
+h1{font-size:clamp(30px,8vw,64px);color:#f33;margin:0 0 20px}
+p{font-size:18px}
+.bar{height:26px;border:2px solid #fff;margin:25px 0;overflow:hidden}
+.fill{height:100%;width:0;background:#f33}
+#pct{font-size:25px}
+#log{height:110px;text-align:left;overflow:hidden;color:#ff7777;font-size:13px}
+#final{display:none}
+.big{font-size:clamp(38px,10vw,80px);color:#00ff66;font-weight:bold}
+button{border:0;padding:14px 25px;font:inherit;font-weight:bold;cursor:pointer;background:#00ff66;color:#000;border-radius:8px}
+.glitch{animation:shake .07s infinite}
+.flash{animation:flash .12s infinite}
+@keyframes shake{0%{transform:translate(2px,0)}25%{transform:translate(-2px,1px)}50%{transform:translate(1px,-2px)}75%{transform:translate(-1px,2px)}100%{transform:translate(2px,-1px)}}
+@keyframes flash{50%{filter:invert(1)}}
 </style>
 </head>
 <body>
-<div class="screen">
-<div id="loading">
-<div class="warning">⚠ SYSTEM ALERT ⚠</div>
-<div class="box">
-<div class="alert">Ancaman keamanan terdeteksi!</div>
-<p>Sistem sedang melakukan pemeriksaan keamanan...</p>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<div class="percent" id="percent">0%</div>
-<div class="fake" id="fake">Scanning system files...</div>
-</div>
-</div>
-<div id="prank">
-<div class="prank-title">😂 BOY AWAS ADA RIDHO</div>
-<div class="alert">HP kamu sebenarnya aman.</div>
-<p>Tenang bro, ini cuma website prank 🤣</p>
+<div id="app">
+<section class="card" id="main">
+<h1>⚠ SYSTEM FAILURE ⚠</h1>
+<p id="status">Memeriksa sistem...</p>
+<div class="bar"><div class="fill" id="fill"></div></div>
+<div id="pct">0%</div>
+<div id="log"></div>
+</section>
+<section class="card" id="final">
+<div class="big">😂 BOY AWAS ADA RIDHO</div>
+<p>Tenang bro. HP kamu aman.</p>
+<p>Ini cuma <b>EXTREME PRANK</b> 🤣</p>
 <button onclick="location.reload()">ULANGI</button>
-</div>
+</section>
 </div>
 <script>
-let progress=0;
-const bar=document.getElementById("bar");
-const percent=document.getElementById("percent");
-const loading=document.getElementById("loading");
-const prank=document.getElementById("prank");
-const fake=document.getElementById("fake");
-const messages=[
+const fill=document.getElementById('fill'),pct=document.getElementById('pct'),
+status=document.getElementById('status'),log=document.getElementById('log'),
+main=document.getElementById('main'),final=document.getElementById('final');
+const msgs=[
 "Scanning system files...",
 "Checking applications...",
-"Analyzing security...",
-"Checking suspicious files...",
-"Almost finished..."
+"Analyzing memory...",
+"Checking suspicious activity...",
+"Security process running...",
+"Critical warning detected...",
+"Attempting recovery...",
+"Recovery stuck at 99%..."
 ];
-let i=0;
+let n=0;
 const timer=setInterval(()=>{
- progress++;
- bar.style.width=progress+"%";
- percent.textContent=progress+"%";
- if(progress%20===0){
-   i=Math.min(i+1,messages.length-1);
-   fake.textContent=messages[i];
- }
- if(progress>=70) document.body.classList.add("shake");
- if(progress>=100){
+ n++;
+ const p=Math.min(n,100);
+ fill.style.width=p+'%'; pct.textContent=p+'%';
+ if(n%10===0) log.innerHTML += '> '+msgs[Math.min(n/10-1,msgs.length-1)]+'<br>';
+ if(n>70) main.classList.add('glitch');
+ if(n>88) status.textContent='⚠ SYSTEM UNSTABLE — PLEASE WAIT...';
+ if(n>=100){
    clearInterval(timer);
+   main.classList.add('flash');
+   status.textContent='ERROR 0xPRANK';
    setTimeout(()=>{
-     document.body.classList.remove("shake");
-     loading.style.display="none";
-     prank.style.display="block";
-   },1200);
+     main.style.display='none';
+     final.style.display='block';
+   },1800);
  }
-},70);
+},55);
 </script>
 </body>
 </html>
